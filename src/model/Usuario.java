@@ -29,7 +29,7 @@ public class Usuario extends Pessoa{
     }
 
     public void setCargo(Cargo cargo){
-        if(this.cargo == null){
+        if(cargo == null){
             throw new IllegalArgumentException("ERRO! Cargo inválido.");
         }
         this.cargo = cargo;

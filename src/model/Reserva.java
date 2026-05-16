@@ -1,12 +1,7 @@
 package model;
 import enums.StatusReserva;
-import static enums.StatusReserva.AGENDADA;
-import static enums.StatusReserva.ANDAMENTO;
-import static enums.StatusReserva.CONCLUIDA;
-import static enums.StatusReserva.CANCELADA;
-import static enums.StatusQuarto.DISPONIVEL;
-import static enums.StatusQuarto.RESERVADO;
-import static enums.StatusQuarto.OCUPADO;
+import static enums.StatusReserva.*;
+import static enums.StatusQuarto.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
