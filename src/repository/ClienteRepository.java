@@ -41,7 +41,7 @@ public class ClienteRepository {
         Cliente cliente = buscarClientePorId(id);
 
         if(cliente == null){
-            throw new IllegalArgumentException("ERRO, Cliente inválido.");
+            throw new IllegalArgumentException("ERRO! Não existe cliente com esse ID.");
         }
 
         listaClientes.remove(cliente);
