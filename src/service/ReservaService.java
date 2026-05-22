@@ -1,4 +1,5 @@
 package service;
+import enums.StatusQuarto;
 import model.*;
 import repository.*;
 import java.time.LocalDate;
@@ -35,6 +36,8 @@ public class ReservaService {
         Reserva reserva = new Reserva(idReserva, cliente, quarto, checkin, checkout);
 
         reservaRepository.adicionarReserva(reserva);
+
+        quarto.setStatus(StatusQuarto.RESERVADO);
 
         return reserva;
     }

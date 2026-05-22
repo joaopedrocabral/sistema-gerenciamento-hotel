@@ -8,7 +8,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
 public class Reserva {
-    private static final DateTimeFormatter FORMATADOR = DateTimeFormatter.ofPattern("EEE dd/MM/yyyy", new Locale("pt", "BR"));
+    private static final DateTimeFormatter FORMATADOR = DateTimeFormatter.ofPattern("EEE dd/MM/yyyy",
+            Locale.of("pt", "BR"));
 
     private int id;
     private Cliente cliente;
@@ -28,7 +29,6 @@ public class Reserva {
         setDataCheckout(dataCheckout);
         calcularValorTotal();
         setStatus(AGENDADA);
-        this.quarto.setStatus(RESERVADO);
     }
 
     public int getId(){
@@ -159,6 +159,11 @@ public class Reserva {
         LocalDate dataFinal =(dataCheckoutReal == null)? dataCheckout : dataCheckoutReal;
 
         long diasDeReserva = ChronoUnit.DAYS.between(dataCheckin, dataFinal);
+
+        if(diasDeReserva <= 0){
+            diasDeReserva = 1;
+        }
+
         setValorTotal(diasDeReserva * quarto.getValorDiaria());
     }
 
@@ -175,6 +180,10 @@ public class Reserva {
             throw new IllegalArgumentException("ERRO! Não é possivel realizar check-in, o quarto está ocupado.");
         }
 
+        if(LocalDate.now().isBefore(dataCheckin)){
+            throw new IllegalArgumentException("ERRO! Ainda não é possível realizar check-in.");
+        }
+
         setStatus(ANDAMENTO);
         quarto.setStatus(OCUPADO);
     }
@@ -188,11 +197,15 @@ public class Reserva {
             throw new IllegalArgumentException("ERRO! Não é possível realizar check-out, o quarto não está ocupado.");
         }
 
-        setDataCheckoutReal(LocalDate.now());
+        LocalDate dataSaida = LocalDate.now();
+
+        setDataCheckoutReal(dataSaida);
         calcularValorTotal();
 
         setStatus(CONCLUIDA);
         quarto.setStatus(DISPONIVEL);
+
+        System.out.println(quarto.getStatus());
     }
 
     public void cancelarReserva(){
@@ -213,18 +226,23 @@ public class Reserva {
 
     @Override
     public String toString(){
+
+        String checkoutReal = "";
+
+        if(status == CONCLUIDA || status == CANCELADA){
+            checkoutReal = "Check-out Real: " + (dataCheckoutReal == null? "Não Realizado" : dataCheckoutReal.format(FORMATADOR)) + "\n";
+        }
+
         return "===== INFORMAÇÕES DA RESERVA =====\n" +
                 "ID: " + id + "\n" +
                 "Cliente: " + cliente.getNome() + "\n" +
                 "Quarto: " + quarto.getNumero() + "\n" +
                 "Check-in: " + dataCheckin.format(FORMATADOR) + "\n" +
                 "Check-out Esperado: " + dataCheckout.format(FORMATADOR) + "\n" +
-                (status == CONCLUIDA || status == CANCELADA?
-                        "Check-out Real: " + dataCheckoutReal.format(FORMATADOR) + "\n" : "")  +
+                checkoutReal +
                 "Valor Total: R$ " + valorTotal + "\n" +
                 "Multa Aplicada: R$ " + multa + "\n" +
                 "Status: " + status + "\n";
 
     }
-
 }
