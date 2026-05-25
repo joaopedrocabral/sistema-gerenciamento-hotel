@@ -1,12 +1,14 @@
 package repository;
 import model.Quarto;
+import persistencia.QuartoPersistencia;
+
 import java.util.ArrayList;
 
 public class QuartoRepository {
     private ArrayList<Quarto> listaQuartos;
 
     public QuartoRepository(){
-        listaQuartos = new ArrayList<>();
+        listaQuartos = QuartoPersistencia.carregarQuartos();
     }
 
     public Quarto buscarQuartoPorNumero(int numero){
@@ -33,6 +35,8 @@ public class QuartoRepository {
         }
 
         listaQuartos.add(quarto);
+
+        QuartoPersistencia.salvarQuartos(listaQuartos);
     }
 
     public void removerQuarto(int numero){
@@ -43,6 +47,8 @@ public class QuartoRepository {
         }
 
         listaQuartos.remove(quarto);
+
+        QuartoPersistencia.salvarQuartos(listaQuartos);
     }
 
     public ArrayList<Quarto> listarQuartos(){

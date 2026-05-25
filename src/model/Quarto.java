@@ -18,6 +18,14 @@ public class Quarto {
         setStatus(StatusQuarto.DISPONIVEL);
     }
 
+    public Quarto(int numero, TipoQuarto tipo, int capacidade, double valorDiaria, StatusQuarto status){
+        setNumero(numero);
+        setTipo(tipo);
+        setCapacidade(capacidade);
+        setValorDiaria(valorDiaria);
+        setStatus(status);
+    }
+
     public int getNumero(){
         return numero;
     }

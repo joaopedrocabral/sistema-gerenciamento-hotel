@@ -31,6 +31,19 @@ public class Reserva {
         setStatus(AGENDADA);
     }
 
+    public Reserva(int id, Cliente cliente, Quarto quarto, LocalDate dataCheckin, LocalDate dataCheckout,
+                   LocalDate dataCheckoutReal, double valorTotal, double multa, StatusReserva status){
+        this.id =id;
+        this.cliente = cliente;
+        this.quarto = quarto;
+        this.dataCheckin = dataCheckin;
+        this.dataCheckout = dataCheckout;
+        this.dataCheckoutReal = dataCheckoutReal;
+        this.valorTotal = valorTotal;
+        this.multa = multa;
+        this.status = status;
+    }
+
     public int getId(){
         return id;
     }

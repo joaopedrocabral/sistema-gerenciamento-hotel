@@ -4,36 +4,195 @@ import enums.TipoQuarto;
 import model.*;
 import repository.*;
 import service.*;
-
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
-import java.util.ArrayList;
 
 public class Main {
+    public static int lerInteiro(Scanner scanner){
+        while (true){
+            try {
+                int valor = scanner.nextInt();
+                scanner.nextLine();
+                return valor;
+
+            } catch (Exception e){
+                System.out.println("ERRO! Digite um número inteiro válido.");
+
+                scanner.nextLine();
+            }
+        }
+    }
+    public static double lerDouble(Scanner scanner){
+        while(true) {
+            try {
+                double valor = scanner.nextDouble();
+                scanner.nextLine();
+                return valor;
+
+            } catch (Exception e) {
+                System.out.println("ERRO! Digite um valor válido.");
+                scanner.nextLine();
+            }
+        }
+    }
+    public static String lerString(Scanner scanner){
+        return scanner.nextLine();
+    }
+    public static LocalDate lerData(Scanner scanner){
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        while (true) {
+            try {
+                String data = scanner.nextLine();
+
+                return LocalDate.parse(data, formatador);
+
+            } catch (Exception e){
+                System.out.println("ERRO! Use o formato DD/MM/AAAA");
+            }
+        }
+    }
+    public static void mostrarTitulos(String titulo){
+        int largura = 40;
+        int espacos = (largura - titulo.length()) / 2;
+
+        titulo = titulo.trim().toUpperCase();
+
+        System.out.println();
+
+        System.out.println("=".repeat(largura));
+        System.out.println(" ".repeat(espacos) + titulo);
+        System.out.println("=".repeat(largura));
+    }
+    public static void aguardarEnter(Scanner scanner){
+        System.out.println();
+        System.out.println("Pressione ENTER para continuar...");
+        scanner.nextLine();
+    }
+    public static String formatarCPF(String cpf){
+        if(cpf == null){
+            throw new IllegalArgumentException("ERRO! CPF inválido.");
+        }
+
+        cpf = cpf.replaceAll("\\D","");
+
+        if(cpf.length() != 11){
+            throw new IllegalArgumentException("ERRO! CPF deve conter 11 dígitos");
+        }
+
+        return  cpf.substring(0,3) + "." +
+                cpf.substring(3,6) + "." +
+                cpf.substring(6,9) + "-" +
+                cpf.substring(9);
+    }
+    public static String formatarTelefone(String telefone){
+        if(telefone == null){
+            throw new IllegalArgumentException("ERRO! Telefone inválido.");
+        }
+
+        telefone = telefone.replaceAll("\\D", "");
+
+        if(telefone.length() != 10 && telefone.length() != 11){
+            throw new IllegalArgumentException("ERRO! Esse não é um número de telefone.");
+        }
+
+        if(telefone.length() == 10){
+            return  "(" + telefone.substring(0,2) +") " +
+                    telefone.substring(2,6) + "-" +
+                    telefone.substring(6);
+        }
+
+        return "(" + telefone.substring(0,2) +") " +
+                telefone.substring(2,7) + "-" +
+                telefone.substring(7);
+    }
+    public static boolean confirmarAcao(Scanner scanner, String mensagem){
+        System.out.println();
+        System.out.println(mensagem);
+
+        System.out.println("1 - Sim");
+        System.out.println("2 - Não");
+
+        int opcaoConfirmacao = lerInteiro(scanner);
+
+        return opcaoConfirmacao == 1;
+    }
+
     public static void menuPrincipal(){
-        titulo("SISTEMA HOTEL");
+        mostrarTitulos("SISTEMA HOTEL");
         System.out.println("1 - Clientes");
         System.out.println("2 - Quartos");
         System.out.println("3 - Reservas");
-        System.out.println("4 - Usuários");
+        System.out.println("4 - Usuários\n");
+
         System.out.println("0 - Encerrar sistema\n");
 
-        System.out.println("Escolha uma opção: ");
+        System.out.println("Escolha: ");
     }
-
-    public static void titulo(String titulo){
-        System.out.println("===== " + titulo.toUpperCase() + " =====\n");
-    }
-
     public static void menuClientes(){
-        titulo("MENU CLIENTES");
+        mostrarTitulos("MENU CLIENTES");
         System.out.println("1 - Cadastrar Cliente");
         System.out.println("2 - Buscar Cliente");
         System.out.println("3 - Listar Clientes");
-        System.out.println("4 - Remover Cliente");
+        System.out.println("4 - Remover Cliente\n");
         System.out.println("0 - Voltar\n");
-        System.out.println("Escolha uma opção: ");
+        System.out.println("Escolha: ");
+    }
+    public static void menuQuartos(){
+        mostrarTitulos("MENU QUARTOS");
+
+        System.out.println("1 - Cadastrar Quarto");
+        System.out.println("2 - Buscar Quarto");
+        System.out.println("3 - Listar Quartos");
+        System.out.println("4 - Listar Quartos Disponíveis");
+        System.out.println("5 - Remover Quarto\n");
+        System.out.println("0 - Voltar\n");
+        System.out.println("Escolha: ");
+    }
+    public static void menuTiposQuartos(){
+        System.out.println("Escolha o tipo do quarto:\n");
+        System.out.println("1 - Simples");
+        System.out.println("2 - Premium");
+        System.out.println("3 - Luxo\n");
+        System.out.println("Escolha: ");
+    }
+    public static void menuReservas(){
+        mostrarTitulos("MENU RESERVAS");
+        System.out.println("1 - Criar Reserva");
+        System.out.println("2 - Realizar Check-in");
+        System.out.println("3 - Realizar Check-out");
+        System.out.println("4 - Cancelar Reserva");
+        System.out.println("5 - Buscar Reserva");
+        System.out.println("6 - Listar Reservas");
+        System.out.println("7 - Listar Reservas Ativas");
+        System.out.println("8 - Listar Reservas Inativas");
+        System.out.println("9 - Buscar Reservas por Cliente");
+        System.out.println("10 - Buscar Reservas por Quarto\n");
+
+        System.out.println("0 - Voltar\n");
+
+        System.out.println("Escolha: ");
+    }
+    public static void menuUsuarios(){
+        mostrarTitulos("MENU USUÁRIOS");
+
+        System.out.println("1 - Cadastrar Usuário");
+        System.out.println("2 - Autenticar Usuário");
+        System.out.println("3 - Listar Usuários");
+        System.out.println("4 - Remover Usuário\n");
+
+        System.out.println("0 - Voltar\n");
+
+        System.out.println("Escolha: ");
+    }
+    public static void menuCargoUsuario(){
+        System.out.println("Escolha o cargo do Usuário:\n");
+        System.out.println("1 - Atendente");
+        System.out.println("2 - Gerente\n");
+
+        System.out.println("Escolha: ");
     }
 
     public static void executarMenuClientes(Scanner scanner, ClienteService clienteService){
@@ -48,7 +207,7 @@ public class Main {
                 case 1:
                     try {
 
-                        titulo("CADASTRO DE CLIENTES");
+                        mostrarTitulos("CADASTRO DE CLIENTES");
 
                         System.out.println("ID do Cliente: ");
                         int idCliente = lerInteiro(scanner);
@@ -56,20 +215,23 @@ public class Main {
                         System.out.println("Nome: ");
                         String nomeCliente = lerString(scanner);
 
-                        System.out.println("CPF: ");
-                        String cpfCliente = lerString(scanner);
+                        System.out.println("CPF (somente números): ");
+                        String cpfCliente = formatarCPF(lerString(scanner));
 
-                        System.out.println("Telefone: ");
-                        String telefoneCliente = lerString(scanner);
+
+                        System.out.println("Telefone: (somente números)");
+                        String telefoneCliente = formatarTelefone(lerString(scanner));
 
                         Cliente cliente = new Cliente(nomeCliente, cpfCliente, telefoneCliente, idCliente);
                         clienteService.cadastrarCliente(cliente);
 
-                        System.out.println("Cliente cadastrado com sucesso!");
+                        System.out.println("Cliente cadastrado!");
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e) {
 
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
 
                     }
 
@@ -77,13 +239,15 @@ public class Main {
 
                 case 2:
                     try{
-                        System.out.println("Digite o ID do cliente: ");
+                        System.out.println("ID do Cliente: ");
                         int idCliente = lerInteiro(scanner);
                         System.out.println(clienteService.buscarClientePorId(idCliente));
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e){
 
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
 
                     }
                     break;
@@ -93,27 +257,37 @@ public class Main {
 
                     if(listaClientes.isEmpty()){
                         System.out.println("ERRO! Não existe clientes cadastrados.");
+                        aguardarEnter(scanner);
 
                     }else {
                         for (Cliente cliente : listaClientes) {
                             System.out.println(cliente);
                         }
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 4:
                     try{
-                        titulo("REMOVER CLIENTE");
+                        mostrarTitulos("REMOVER CLIENTE");
 
-                        System.out.println("Digite o ID do Cliente: ");
+                        System.out.println("ID do Cliente: ");
                         int idCliente = lerInteiro(scanner);
 
-                        clienteService.removerCliente(idCliente);
+                        if(confirmarAcao(scanner, "Deseja realmente remover esse cliente?")){
+                            clienteService.removerCliente(idCliente);
 
-                        System.out.println("Cliente removido com sucesso!");
+                            System.out.println("Cliente removido!");
+
+                        } else {
+                            System.out.println("Operação cancelada.");
+                        }
+
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e){
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
@@ -124,24 +298,12 @@ public class Main {
                 default:
 
                     System.out.println("Opção Inválida, tente novamente.");
+                    aguardarEnter(scanner);
 
                     break;
             }
         }
     }
-
-    public static void menuQuartos(){
-        titulo("MENU QUARTOS");
-
-        System.out.println("1 - Cadastrar Quarto");
-        System.out.println("2 - Buscar Quarto");
-        System.out.println("3 - Listar Quartos");
-        System.out.println("4 - Listar Quartos Disponíveis");
-        System.out.println("5 - Remover Quarto");
-        System.out.println("0 - Voltar\n");
-        System.out.println("Escolha uma opção: ");
-    }
-
     public static void executarMenuQuartos(Scanner scanner, QuartoService quartoService){
         int opcaoMenuQuartos = -1;
 
@@ -152,9 +314,9 @@ public class Main {
             switch (opcaoMenuQuartos){
                 case 1:
                     try {
-                        titulo("CADASTRO DE QUARTOS");
+                        mostrarTitulos("CADASTRO DE QUARTOS");
 
-                        System.out.println("Digite o Número do quarto: ");
+                        System.out.println("Número do Quarto: ");
                         int numeroQuarto = lerInteiro(scanner);
 
                         menuTiposQuartos();
@@ -179,31 +341,35 @@ public class Main {
                                 throw new IllegalArgumentException("ERRO! Tipo de quarto inválido.");
                         }
 
-                        System.out.println("Digite a capacidade do Quarto: ");
+                        System.out.println("capacidade do Quarto: ");
                         int capacidadeQuarto = lerInteiro(scanner);
 
-                        System.out.println("Digite o valor da diária: R$ ");
+                        System.out.println("valor da diária: R$ ");
                         double valorDiariaQuarto = lerDouble(scanner);
 
                         Quarto quarto = new Quarto(numeroQuarto, tipoQuarto, capacidadeQuarto, valorDiariaQuarto);
 
                         quartoService.cadastrarQuarto(quarto);
 
-                        System.out.println("Quarto cadastrado com sucesso!");
+                        System.out.println("Quarto cadastrado!");
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e){
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 2:
                     try {
-                        System.out.println("Digite o número do quarto: ");
+                        System.out.println("Número do Quarto: ");
                         int numeroQuarto = lerInteiro(scanner);
                         System.out.println(quartoService.buscarQuartoPorNumero(numeroQuarto));
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e){
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
@@ -212,11 +378,13 @@ public class Main {
 
                     if(listaQuartos.isEmpty()){
                         System.out.println("ERRO! Não existe quartos cadastrados!");
+                        aguardarEnter(scanner);
 
                     }else{
                         for(Quarto quarto : listaQuartos){
                             System.out.println(quarto);
                         }
+                        aguardarEnter(scanner);
                     }
                     break;
 
@@ -225,27 +393,36 @@ public class Main {
 
                     if(listaQuartosDisponiveis.isEmpty()){
                         System.out.println("ERRO! Não existe quartos disponíveis!");
+                        aguardarEnter(scanner);
 
                     } else {
                         for(Quarto quarto : listaQuartosDisponiveis){
                             System.out.println(quarto);
                         }
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 5:
                     try{
-                        titulo("REMOVER QUARTO");
+                        mostrarTitulos("REMOVER QUARTO");
 
-                        System.out.println("Digite o Número do Quarto: ");
+                        System.out.println("Número do Quarto: ");
                         int numeroQuarto = lerInteiro(scanner);
 
-                        quartoService.removerQuarto(numeroQuarto);
+                        if(confirmarAcao(scanner, "Deseja realmente remover esse quarto?")){
+                            quartoService.removerQuarto(numeroQuarto);
 
-                        System.out.println("Quarto removido com sucesso!");
+                            System.out.println("Quarto removido!");
+
+                        } else {
+                            System.out.println("Operação cancelada.");
+                        }
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e){
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
@@ -255,36 +432,12 @@ public class Main {
 
                 default:
                     System.out.println("Opção Inválida!");
+                    aguardarEnter(scanner);
 
                     break;
             }
         }
     }
-
-    public static void menuTiposQuartos(){
-        System.out.println("Escolha o tipo do quarto:\n");
-        System.out.println("1 - Simples");
-        System.out.println("2 - Premium");
-        System.out.println("3 - Luxo\n");
-        System.out.println("Escolha uma opção: ");
-    }
-
-    public static void menuReservas(){
-        titulo("MENU RESERVAS");
-        System.out.println("1 - Criar Reserva");
-        System.out.println("2 - Realizar Check-in");
-        System.out.println("3 - Realizar Check-out");
-        System.out.println("4 - Cancelar Reserva");
-        System.out.println("5 - Buscar Reserva");
-        System.out.println("6 - Listar Reservas");
-        System.out.println("7 - Listar Reservas Ativas");
-        System.out.println("8 - Listar Reservas Inativas");
-        System.out.println("9 - Buscar Reservas por Cliente");
-        System.out.println("10 - Buscar Reservas por Quarto");
-        System.out.println("0 - Voltar\n");
-        System.out.println("Escolha uma opção: ");
-    }
-
     public static void executarMenuReservas(Scanner scanner, ReservaService reservaService,
                                             ClienteService clienteService, QuartoService quartoService){
         int opcaoMenuReservas = -1;
@@ -296,151 +449,169 @@ public class Main {
             switch (opcaoMenuReservas) {
                 case 1:
                     try {
+                        mostrarTitulos("CRIAR RESERVA");
 
-                        titulo("CRIAR RESERVA");
-
-                        System.out.println("Digite o ID da Reserva: ");
+                        System.out.println("ID da Reserva: ");
                         int idReserva = lerInteiro(scanner);
 
-                        System.out.println("Digite o ID do Cliente: ");
+                        System.out.println("ID do Cliente: ");
                         int idCliente = lerInteiro(scanner);
 
-                        System.out.println("Digite o Número do Quarto: ");
+                        System.out.println("Número do Quarto: ");
                         int numeroQuarto = lerInteiro(scanner);
 
-                        System.out.println("Digite a data de Check-in (DD/MM/AAAA): ");
+                        System.out.println("data de Check-in (DD/MM/AAAA): ");
                         LocalDate dataCheckin = lerData(scanner);
 
-                        System.out.println("Digite a data de Check-out (DD/MM/AAAA): ");
+                        System.out.println("data de Check-out (DD/MM/AAAA): ");
                         LocalDate dataCheckout = lerData(scanner);
 
                         Reserva reserva = reservaService.criarReserva(idReserva, idCliente, numeroQuarto, dataCheckin, dataCheckout);
 
                         System.out.println(reserva);
 
-                        System.out.println("\nReserva criada com sucesso!");
+                        System.out.println("\nReserva criada!");
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 2:
                     try {
-                        titulo("CHECK-IN");
+                        mostrarTitulos("CHECK-IN");
 
-                        System.out.println("Digite o ID da Reserva: ");
+                        System.out.println("ID da Reserva: ");
                         int idReserva = lerInteiro(scanner);
 
                         reservaService.realizarCheckIn(idReserva);
 
-                        System.out.println("Check-in realizado com sucesso!");
+                        System.out.println("Check-in realizado!");
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 3:
                     try {
-                        titulo("CHECK-OUT");
+                        mostrarTitulos("CHECK-OUT");
 
-                        System.out.println("Digite o ID da Reserva: ");
+                        System.out.println("ID da Reserva: ");
                         int idReserva = lerInteiro(scanner);
 
                         reservaService.realizarCheckOut(idReserva);
 
-                        System.out.println("Check-Out realizado com sucesso!");
+                        System.out.println("Check-Out realizado!");
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 4:
                     try {
-                        titulo("CANCELAR RESERVA");
+                        mostrarTitulos("CANCELAR RESERVA");
 
-                        System.out.println("Digite o ID da Reserva: ");
+                        System.out.println("ID da Reserva: ");
                         int idReserva = lerInteiro(scanner);
 
-                        reservaService.cancelarReserva(idReserva);
+                        if(confirmarAcao(scanner, "Deseja realmente cancelar essa reserva?")){
+                            reservaService.cancelarReserva(idReserva);
 
-                        System.out.println("Reserva cancelada com sucesso!");
+                            System.out.println("Reserva cancelada.");
+
+                        } else {
+                            System.out.println("Operação cancelada.");
+                        }
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 5:
                     try {
-                        titulo("BUSCAR RESERVA POR ID");
+                        mostrarTitulos("BUSCAR RESERVA POR ID");
 
-                        System.out.println("Digite o ID da Reserva: ");
+                        System.out.println("ID da Reserva: ");
                         int idReserva = lerInteiro(scanner);
 
                         System.out.println(reservaService.buscarReservaPorId(idReserva));
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 6:
-                    titulo("LISTAR RESERVAS");
+                    mostrarTitulos("LISTAR RESERVAS");
 
                     ArrayList<Reserva> listaReservas = reservaService.listarReservas();
 
                     if (listaReservas.isEmpty()) {
                         System.out.println("ERRO! Não existe reservas cadastradas!");
+                        aguardarEnter(scanner);
 
                     } else {
                         for (Reserva reserva : listaReservas) {
                             System.out.println(reserva);
                         }
+                        aguardarEnter(scanner);
 
                     }
                     break;
 
                 case 7:
-                    titulo("LISTAR RESERVAS ATIVAS");
+                    mostrarTitulos("LISTAR RESERVAS ATIVAS");
 
                     ArrayList<Reserva> listaReservasAtivas = reservaService.listarReservasAtivas();
 
                     if (listaReservasAtivas.isEmpty()) {
                         System.out.println("ERRO! Não existe reservas ativas!");
+                        aguardarEnter(scanner);
 
                     } else {
                         for (Reserva reserva : listaReservasAtivas) {
                             System.out.println(reserva);
                         }
-
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 8:
-                    titulo("LISTAR RESERVAS INATIVAS");
+                    mostrarTitulos("LISTAR RESERVAS INATIVAS");
 
                     ArrayList<Reserva> listaReservasInativas = reservaService.listarReservasInativas();
 
                     if (listaReservasInativas.isEmpty()) {
                         System.out.println("ERRO! Não existe reservas inativas!");
+                        aguardarEnter(scanner);
 
                     } else {
                         for (Reserva reserva : listaReservasInativas) {
                             System.out.println(reserva);
                         }
-
+                        aguardarEnter(scanner);
                     }
 
                     break;
 
                 case 9:
                     try {
-                        titulo("BUSCAR RESERVA POR CLIENTE");
+                        mostrarTitulos("BUSCAR RESERVA POR CLIENTE");
 
-                        System.out.println("Digite o ID do Cliente: ");
+                        System.out.println("ID do Cliente: ");
                         int idCliente = lerInteiro(scanner);
 
                         Cliente cliente = clienteService.buscarClientePorId(idCliente);
@@ -449,24 +620,26 @@ public class Main {
 
                         if (reservasDoCliente.isEmpty()) {
                             System.out.println("ERRO! Esse cliente não possui reservas cadastradas.");
+                            aguardarEnter(scanner);
 
                         } else {
                             for (Reserva reserva : reservasDoCliente) {
                                 System.out.println(reserva);
                             }
-
+                            aguardarEnter(scanner);
                         }
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 10:
                     try {
-                        titulo("BUSCAR RESERVAR POR QUARTO");
+                        mostrarTitulos("BUSCAR RESERVAR POR QUARTO");
 
-                        System.out.println("Digite o número do Quarto: ");
+                        System.out.println("Número do Quarto: ");
                         int numeroQuarto = lerInteiro(scanner);
 
                         Quarto quarto = quartoService.buscarQuartoPorNumero(numeroQuarto);
@@ -475,15 +648,17 @@ public class Main {
 
                         if (reservasDoQuarto.isEmpty()) {
                             System.out.println("ERRO! Esse quarto não possui reservas.");
+                            aguardarEnter(scanner);
 
                         } else {
                             for (Reserva reserva : reservasDoQuarto) {
                                 System.out.println(reserva);
                             }
-
+                            aguardarEnter(scanner);
                         }
                     } catch (IllegalArgumentException e){
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
@@ -493,20 +668,11 @@ public class Main {
 
                 default:
                     System.out.println("Opção Inválida");
+                    aguardarEnter(scanner);
                     break;
             }
         }
     }
-    public static void menuUsuarios(){
-        titulo("MENU USUÁRIOS");
-
-        System.out.println("1 - Cadastrar Usuário");
-        System.out.println("2 - Autenticar Usuário");
-        System.out.println("3 - Listar Usuários");
-        System.out.println("4 - Remover Usuário");
-        System.out.println("0 - Voltar");
-    }
-
     public static void executarMenuUsuarios(Scanner scanner, UsuarioService usuarioService){
 
         int opcaoMenuUsuarios = -1;
@@ -519,21 +685,21 @@ public class Main {
             switch (opcaoMenuUsuarios){
                 case 1:
                     try {
-                     titulo("CADASTRO DE USUÁRIO");
+                        mostrarTitulos("CADASTRO DE USUÁRIO");
 
-                        System.out.println("Digite o ID do Usuário: ");
+                        System.out.println("ID Usuário: ");
                         int idUsuario = lerInteiro(scanner);
 
-                        System.out.println("Digite o Nome do Usuário: ");
+                        System.out.println("Nome: ");
                         String nomeUsuario = lerString(scanner);
 
-                        System.out.println("Digite o CPF do Usuário: ");
+                        System.out.println("CPF: ");
                         String cpfUsuario = lerString(scanner);
 
-                        System.out.println("Digite o Telefone do Usuário: ");
+                        System.out.println("Telefone: ");
                         String telefoneUsuario = lerString(scanner);
 
-                        System.out.println("Digite a Senha do Usuário: ");
+                        System.out.println("Senha: ");
                         String senhaUsuario = lerString(scanner);
 
                         menuCargoUsuario();
@@ -557,25 +723,33 @@ public class Main {
 
                         usuarioService.cadastrarUsuario(usuario);
 
+                        System.out.println("Usuário cadastrado!");
+                        aguardarEnter(scanner);
+
                     } catch (IllegalArgumentException e){
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 2:
                     try {
-                        titulo("AUTENTICAR USUÁRIO");
+                        mostrarTitulos("AUTENTICAR USUÁRIO");
 
-                        System.out.println("Digite o ID do Usuário: ");
+                        System.out.println("ID Usuário: ");
                         int idUsuario = lerInteiro(scanner);
 
-                        System.out.println("Digite a Senha: ");
+                        System.out.println("Senha: ");
                         String senhaUsuario = lerString(scanner);
 
                         Usuario usuario = usuarioService.autenticarUsuario(idUsuario, senhaUsuario);
 
+                        System.out.println("Usuário autenticado");
+                        aguardarEnter(scanner);
+
                     } catch (IllegalArgumentException e){
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
@@ -584,25 +758,36 @@ public class Main {
 
                     if(listaUsuarios.isEmpty()){
                         System.out.println("ERRO! Não existe usuários cadastrados.");
+                        aguardarEnter(scanner);
 
                     } else {
                         for (Usuario usuario : listaUsuarios){
                             System.out.println(usuario);
                         }
+                        aguardarEnter(scanner);
                     }
                     break;
 
                 case 4:
                     try {
-                        titulo("REMOVER USUÁRIO");
+                        mostrarTitulos("REMOVER USUÁRIO");
 
-                        System.out.println("Digite o ID do Usuário: ");
+                        System.out.println("ID Usuário: ");
                         int idUsuario = lerInteiro(scanner);
 
-                        usuarioService.removerUsuario(idUsuario);
+                        if(confirmarAcao(scanner, "Deseja realmente remover esse usuário?")){
+                            usuarioService.removerUsuario(idUsuario);
+
+                            System.out.println("Usuário removido");
+
+                        } else {
+                            System.out.println("Operação Cancelada");
+                        }
+                        aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e){
                         System.out.println(e.getMessage());
+                        aguardarEnter(scanner);
                     }
                     break;
 
@@ -612,64 +797,10 @@ public class Main {
 
                 default:
                     System.out.println("ERRO! Opção Inválida.");
+                    aguardarEnter(scanner);
                     break;
             }
 
-        }
-    }
-
-    public static void menuCargoUsuario(){
-        System.out.println("Escolha o cargo do Usuário:\n");
-        System.out.println("1 - Atendente");
-        System.out.println("2 - Gerente");
-        System.out.println("Escolha uma opção: ");
-    }
-
-    public static int lerInteiro(Scanner scanner){
-        while (true){
-            try {
-                int valor = scanner.nextInt();
-                scanner.nextLine();
-                return valor;
-
-            } catch (Exception e){
-                System.out.println("ERRO! Digite um número inteiro válido.");
-
-                scanner.nextLine();
-            }
-        }
-    }
-
-    public static double lerDouble(Scanner scanner){
-        while(true) {
-            try {
-                double valor = scanner.nextDouble();
-                scanner.nextLine();
-                return valor;
-
-            } catch (Exception e) {
-                System.out.println("ERRO! Digite um valor válido.");
-                scanner.nextLine();
-            }
-        }
-    }
-
-    public static String lerString(Scanner scanner){
-        return scanner.nextLine();
-    }
-
-    public static LocalDate lerData(Scanner scanner){
-        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        while (true) {
-            try {
-                String data = scanner.nextLine();
-
-                return LocalDate.parse(data, formatador);
-
-            } catch (Exception e){
-                System.out.println("ERRO! Use DD/MM/AAAA");
-            }
         }
     }
 
@@ -678,8 +809,8 @@ public class Main {
 
         ClienteRepository clienteRepository = new ClienteRepository();
         QuartoRepository quartoRepository = new QuartoRepository();
-        ReservaRepository reservaRepository = new ReservaRepository();
         UsuarioRepository usuarioRepository = new UsuarioRepository();
+        ReservaRepository reservaRepository = new ReservaRepository(clienteRepository, quartoRepository);
 
         ClienteService clienteService = new ClienteService(clienteRepository);
         QuartoService quartoService = new QuartoService(quartoRepository);
@@ -714,14 +845,19 @@ public class Main {
                 }
 
                 case 0: {
-                    System.out.println("Encerrando...");
+                    if (confirmarAcao(scanner, "Deseja encerrar o sistema?")){
+                        System.out.println("Encerrando...");
+                        opcaoMenu = 0;
 
+                    } else {
+                        opcaoMenu = -1;
+                    }
                     break;
                 }
 
                 default: {
                     System.out.println("ERRO! Opção Inválida");
-
+                    aguardarEnter(scanner);
                     break;
                 }
 

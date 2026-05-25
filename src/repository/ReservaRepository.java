@@ -3,6 +3,7 @@ package repository;
 import model.Cliente;
 import model.Quarto;
 import model.Reserva;
+import persistencia.ReservaPersistencia;
 import java.util.ArrayList;
 import static enums.StatusReserva.*;
 
@@ -11,8 +12,8 @@ public class ReservaRepository {
     private ArrayList<Reserva> listaReservas;
 
 
-    public ReservaRepository(){
-        listaReservas = new ArrayList<>();
+    public ReservaRepository(ClienteRepository clienteRepository, QuartoRepository quartoRepository){
+        listaReservas = ReservaPersistencia.carregarReservas(clienteRepository, quartoRepository);
     }
 
     public Reserva buscarReservaPorId(int id){
@@ -39,6 +40,7 @@ public class ReservaRepository {
         }
 
         listaReservas.add(reserva);
+        ReservaPersistencia.salvarReservas(listaReservas);
     }
 
     public void removerReserva(int id){
@@ -49,6 +51,7 @@ public class ReservaRepository {
         }
 
         listaReservas.remove(reserva);
+        ReservaPersistencia.salvarReservas(listaReservas);
     }
 
     public ArrayList<Reserva> listarReservas(){

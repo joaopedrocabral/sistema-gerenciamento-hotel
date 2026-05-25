@@ -1,12 +1,13 @@
 package repository;
 import model.Cliente;
+import persistencia.ClientePersistencia;
 import java.util.ArrayList;
 
 public class ClienteRepository {
     private ArrayList<Cliente> listaClientes;
 
     public ClienteRepository(){
-        listaClientes = new ArrayList<>();
+        listaClientes = ClientePersistencia.carregarClientes();
     }
 
     public void adicionarCliente(Cliente cliente){
@@ -18,6 +19,8 @@ public class ClienteRepository {
         }
 
         listaClientes.add(cliente);
+
+        ClientePersistencia.salvarClientes(listaClientes);
     }
 
     public ArrayList<Cliente> listarClientes(){
@@ -45,5 +48,7 @@ public class ClienteRepository {
         }
 
         listaClientes.remove(cliente);
+
+        ClientePersistencia.salvarClientes(listaClientes);
     }
 }
