@@ -51,6 +51,7 @@ public class Main {
 
             } catch (Exception e){
                 System.out.println("ERRO! Use o formato DD/MM/AAAA");
+                e.getMessage();
             }
         }
     }
@@ -807,10 +808,10 @@ public class Main {
     static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
 
-        ClienteRepository clienteRepository = new ClienteRepository();
-        QuartoRepository quartoRepository = new QuartoRepository();
-        UsuarioRepository usuarioRepository = new UsuarioRepository();
-        ReservaRepository reservaRepository = new ReservaRepository(clienteRepository, quartoRepository);
+        ClienteRepository clienteRepository = ClienteRepository.getInstance();
+        QuartoRepository quartoRepository = QuartoRepository.getInstance();
+        UsuarioRepository usuarioRepository = UsuarioRepository.getInstance();
+        ReservaRepository reservaRepository = ReservaRepository.getInstance(clienteRepository, quartoRepository);
 
         ClienteService clienteService = new ClienteService(clienteRepository);
         QuartoService quartoService = new QuartoService(quartoRepository);

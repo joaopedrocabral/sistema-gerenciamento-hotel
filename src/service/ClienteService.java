@@ -22,10 +22,14 @@ public class ClienteService {
 
     public void cadastrarCliente(Cliente cliente){
         clienteRepository.adicionarCliente(cliente);
+
+        clienteRepository.salvar();
     }
 
     public void removerCliente(int idCliente){
         clienteRepository.removerCliente(idCliente);
+
+        clienteRepository.salvar();
     }
 
     public ArrayList<Cliente> listarClientes(){

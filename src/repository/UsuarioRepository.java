@@ -1,26 +1,33 @@
 package repository;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import model.Usuario;
 
 public class UsuarioRepository {
-    private ArrayList<Usuario> listaUsuarios;
+    private static UsuarioRepository instance;
 
-    public UsuarioRepository(){
-        listaUsuarios = new ArrayList<>();
+    private HashMap<Integer, Usuario> listaUsuarios;
+
+    private UsuarioRepository(){
+        listaUsuarios = new HashMap<>();
     }
+
+    public static UsuarioRepository getInstance(){
+        if(instance == null){
+            instance = new UsuarioRepository();
+        }
+
+        return instance;
+    }
+
 
     public Usuario buscarUsuarioPorId(int id){
         if(id <= 0){
             return null;
         }
 
-        for(Usuario usuario : listaUsuarios){
-            if(usuario.getId() == id){
-                return usuario;
-            }
-        }
-
-        return null;
+        return listaUsuarios.get(id);
     }
 
     public void adicionarUsuario(Usuario usuario){
@@ -28,25 +35,21 @@ public class UsuarioRepository {
             throw new IllegalArgumentException("ERRO! Usuário inválido.");
         }
 
-        if(buscarUsuarioPorId(usuario.getId()) != null){
+        if(listaUsuarios.containsKey(usuario.getId())){
             throw new IllegalArgumentException("ERRO! Já existe um usuário com esse ID.");
         }
 
-        listaUsuarios.add(usuario);
+        listaUsuarios.put(usuario.getId(), usuario);
     }
 
     public void removerUsuario(int id){
-        Usuario usuario = buscarUsuarioPorId(id);
-
-        if(usuario == null){
+        if(listaUsuarios.remove(id) == null){
             throw new IllegalArgumentException("ERRO! Usuário inválido.");
         }
-
-        listaUsuarios.remove(usuario);
     }
 
     public ArrayList<Usuario> listarUsuarios(){
-        return new ArrayList<>(listaUsuarios);
+        return new ArrayList<>(listaUsuarios.values());
     }
 
 }

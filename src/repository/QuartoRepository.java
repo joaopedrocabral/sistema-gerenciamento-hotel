@@ -3,12 +3,23 @@ import model.Quarto;
 import persistencia.QuartoPersistencia;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class QuartoRepository {
-    private ArrayList<Quarto> listaQuartos;
+    private static QuartoRepository instance;
 
-    public QuartoRepository(){
+    private HashMap<Integer, Quarto> listaQuartos;
+
+    private QuartoRepository(){
         listaQuartos = QuartoPersistencia.carregarQuartos();
+    }
+
+    public static QuartoRepository getInstance(){
+        if(instance == null){
+            instance = new QuartoRepository();
+        }
+
+        return instance;
     }
 
     public Quarto buscarQuartoPorNumero(int numero){
@@ -16,13 +27,7 @@ public class QuartoRepository {
             return null;
         }
 
-        for(Quarto quarto : listaQuartos){
-            if(quarto.getNumero() == numero){
-                return quarto;
-            }
-        }
-
-        return null;
+        return listaQuartos.get(numero);
     }
 
     public void adicionarQuarto(Quarto quarto){
@@ -30,41 +35,37 @@ public class QuartoRepository {
             throw new IllegalArgumentException("ERRO! Quarto inválido");
         }
 
-        if(buscarQuartoPorNumero(quarto.getNumero()) != null){
+        if(listaQuartos.containsKey(quarto.getNumero())){
             throw new IllegalArgumentException("ERRO! Já existe um quarto com esse número.");
         }
 
-        listaQuartos.add(quarto);
-
-        QuartoPersistencia.salvarQuartos(listaQuartos);
+        listaQuartos.put(quarto.getNumero(), quarto);
     }
 
     public void removerQuarto(int numero){
-        Quarto quarto = buscarQuartoPorNumero(numero);
-
-        if(quarto == null){
+        if(listaQuartos.remove(numero) == null){
             throw new IllegalArgumentException("ERRO, Quarto inválido.");
         }
-
-        listaQuartos.remove(quarto);
-
-        QuartoPersistencia.salvarQuartos(listaQuartos);
     }
 
     public ArrayList<Quarto> listarQuartos(){
-        return new ArrayList<>(listaQuartos);
+        return new ArrayList<>(listaQuartos.values());
     }
 
     public ArrayList<Quarto> listarQuartosDisponiveis(){
-        ArrayList<Quarto> quartosDisponiveis = new ArrayList<>();
+        ArrayList<Quarto> disponiveis = new ArrayList<>();
 
-        for(Quarto quarto : listaQuartos){
+        for(Quarto quarto : listaQuartos.values()){
             if(quarto.isDisponivel()){
-                quartosDisponiveis.add(quarto);
+                disponiveis.add(quarto);
             }
         }
 
-        return quartosDisponiveis;
+        return disponiveis;
     }
 
+    public void salvar(){
+        QuartoPersistencia.salvarQuartos(listaQuartos);
+    }
 }
+

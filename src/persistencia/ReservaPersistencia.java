@@ -8,18 +8,18 @@ import repository.ClienteRepository;
 import repository.QuartoRepository;
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ReservaPersistencia {
 
     public static final String CAMINHO = "data/reservas.txt";
 
-    public static void salvarReservas(ArrayList<Reserva> listaReservas){
+    public static void salvarReservas(HashMap<Integer, Reserva> listaReservas){
 
         try (FileWriter writer = new FileWriter(CAMINHO);
              BufferedWriter buffer = new BufferedWriter(writer)) {
 
-            for (Reserva reserva : listaReservas){
+            for (Reserva reserva : listaReservas.values()){
                 buffer.write(reserva.getId() + ";" +
                         reserva.getCliente().getId() + ";" +
                         reserva.getQuarto().getNumero() + ";" +
@@ -34,18 +34,18 @@ public class ReservaPersistencia {
             }
 
         } catch (Exception e){
-            System.out.println("Erro na escrita de dados!");
+            System.out.println("Erro na escrita de dados (Reserva).");
             System.out.println(e.getMessage());
         }
     }
 
-    public static ArrayList<Reserva> carregarReservas(ClienteRepository clienteRepository, QuartoRepository quartoRepository){
-        ArrayList<Reserva> listaReservas = new ArrayList<>();
+    public static HashMap<Integer, Reserva> carregarReservas(ClienteRepository clienteRepository, QuartoRepository quartoRepository){
+        HashMap<Integer, Reserva> listaReservas = new HashMap<>();
 
         File arquivo = new File(CAMINHO);
 
         if(!arquivo.exists()){
-            return new ArrayList<>();
+            return new HashMap<>();
         }
 
         try (FileReader reader = new FileReader(CAMINHO);
@@ -68,14 +68,14 @@ public class ReservaPersistencia {
                                                 Double.parseDouble(dados[7]), StatusReserva.valueOf(dados[8])
                 );
 
-                listaReservas.add(reserva);
+                listaReservas.put(reserva.getId(), reserva);
                 linha = buffer.readLine();
             }
 
             return listaReservas;
 
         } catch (Exception e){
-            System.out.println("Erro na leitura de dados!");
+            System.out.println("Erro na leitura de dados (Reserva).");
             System.out.println(e.getMessage());
         }
 

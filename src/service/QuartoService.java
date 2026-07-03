@@ -22,6 +22,8 @@ public class QuartoService {
 
     public void cadastrarQuarto(Quarto quarto){
         quartoRepository.adicionarQuarto(quarto);
+
+        quartoRepository.salvar();
     }
 
     public void removerQuarto(int numeroQuarto){
@@ -32,6 +34,8 @@ public class QuartoService {
         }
 
         quartoRepository.removerQuarto(numeroQuarto);
+
+        quartoRepository.salvar();
     }
 
     public ArrayList<Quarto> listarQuartos(){

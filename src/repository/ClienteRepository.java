@@ -2,29 +2,38 @@ package repository;
 import model.Cliente;
 import persistencia.ClientePersistencia;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ClienteRepository {
-    private ArrayList<Cliente> listaClientes;
+    private static ClienteRepository instance;
 
-    public ClienteRepository(){
+    private HashMap<Integer, Cliente> listaClientes;
+
+    private ClienteRepository(){
         listaClientes = ClientePersistencia.carregarClientes();
+    }
+
+    public static ClienteRepository getInstance(){
+        if(instance == null){
+            instance = new ClienteRepository();
+        }
+
+        return instance;
     }
 
     public void adicionarCliente(Cliente cliente){
         if(cliente == null){
             throw new IllegalArgumentException("ERRO! Cliente inválido.");
         }
-        if(buscarClientePorId(cliente.getId()) != null){
+        if(listaClientes.containsKey(cliente.getId())){
             throw new IllegalArgumentException("ERRO! Já existe um cliente com esse ID.");
         }
 
-        listaClientes.add(cliente);
-
-        ClientePersistencia.salvarClientes(listaClientes);
+        listaClientes.put(cliente.getId(), cliente);
     }
 
     public ArrayList<Cliente> listarClientes(){
-        return new ArrayList<>(listaClientes);
+        return new ArrayList<>(listaClientes.values());
     }
 
     public Cliente buscarClientePorId(int id){
@@ -32,23 +41,16 @@ public class ClienteRepository {
             return null;
         }
 
-        for(Cliente cliente : listaClientes){
-            if(cliente.getId() == id){
-                return cliente;
-            }
-        }
-        return null;
+        return listaClientes.get(id);
     }
 
     public void removerCliente(int id){
-        Cliente cliente = buscarClientePorId(id);
-
-        if(cliente == null){
+        if(listaClientes.remove(id) == null){
             throw new IllegalArgumentException("ERRO! Não existe cliente com esse ID.");
         }
+    }
 
-        listaClientes.remove(cliente);
-
+    public void salvar(){
         ClientePersistencia.salvarClientes(listaClientes);
     }
 }

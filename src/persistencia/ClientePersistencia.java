@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import model.Cliente;
 
@@ -12,11 +12,11 @@ public class ClientePersistencia {
 
     private static final String CAMINHO = "data/clientes.txt";
 
-    public static void salvarClientes(ArrayList<Cliente> listaClientes){
+    public static void salvarClientes(HashMap<Integer, Cliente> listaClientes){
         try(FileWriter writer = new FileWriter(CAMINHO);
             BufferedWriter buffer = new BufferedWriter(writer)) {
 
-            for(Cliente cliente : listaClientes){
+            for(Cliente cliente : listaClientes.values()){
                 buffer.write(cliente.getId() + ";" +
                                  cliente.getNome() + ";" +
                                  cliente.getCpf() + ";" +
@@ -26,20 +26,20 @@ public class ClientePersistencia {
             }
 
         } catch (Exception e){
-            System.out.println("Erro ao salvar dados!");
+            System.out.println("Erro na escrita de dados (Cliente).");
             System.out.println(e.getMessage());
         }
     }
 
-    public static ArrayList<Cliente> carregarClientes(){
+    public static HashMap<Integer, Cliente> carregarClientes(){
 
         File arquivo = new File(CAMINHO);
 
         if(!arquivo.exists()){
-            return new ArrayList<>();
+            return new HashMap<>();
         }
 
-        ArrayList<Cliente> listaClientes = new ArrayList<>();
+        HashMap<Integer, Cliente> listaClientes = new HashMap<>();
 
         try (FileReader reader = new FileReader(CAMINHO);
             BufferedReader buffer = new BufferedReader(reader)) {
@@ -50,14 +50,14 @@ public class ClientePersistencia {
                 String [] dados = linha.split(";");
                 Cliente cliente = new Cliente(dados[1], dados[2], dados[3], Integer.parseInt(dados[0]));
 
-                listaClientes.add(cliente);
+                listaClientes.put(cliente.getId(), cliente);
                 linha = buffer.readLine();
             }
 
             return listaClientes;
 
         } catch (Exception e){
-            System.out.println("Erro na leitura do arquivo!");
+            System.out.println("Erro na leitura de dados (Cliente).");
             System.out.println(e.getMessage());
         }
 

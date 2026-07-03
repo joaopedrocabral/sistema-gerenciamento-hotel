@@ -9,18 +9,18 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class QuartoPersistencia {
 
     public static final String CAMINHO = "data/quartos.txt";
 
-    public static void salvarQuartos(ArrayList<Quarto> listaQuartos){
+    public static void salvarQuartos(HashMap<Integer, Quarto> listaQuartos){
 
         try (FileWriter writer = new FileWriter(CAMINHO);
              BufferedWriter buffer = new BufferedWriter(writer)){
 
-            for(Quarto quarto : listaQuartos){
+            for(Quarto quarto : listaQuartos.values()){
                 buffer.write(quarto.getNumero() + ";" +
                             quarto.getTipo() + ";" +
                             quarto.getCapacidade() + ";" +
@@ -31,20 +31,20 @@ public class QuartoPersistencia {
             }
 
         } catch (Exception e){
-            System.out.println("Erro na escrita de arquivos!");
+            System.out.println("Erro na escrita de dados (Quarto).");
             System.out.println(e.getMessage());
         }
     }
 
-    public static ArrayList<Quarto> carregarQuartos(){
+    public static HashMap<Integer, Quarto> carregarQuartos(){
 
         File arquivo = new File(CAMINHO);
 
         if(!arquivo.exists()){
-            return new ArrayList<>();
+            return new HashMap<>();
         }
 
-        ArrayList<Quarto> listaQuartos = new ArrayList<>();
+        HashMap<Integer, Quarto> listaQuartos = new HashMap<>();
 
         try (FileReader writer = new FileReader(CAMINHO);
              BufferedReader buffer = new BufferedReader(writer)) {
@@ -59,14 +59,14 @@ public class QuartoPersistencia {
                                             StatusQuarto.valueOf(dados[4])
                 );
 
-                listaQuartos.add(quarto);
+                listaQuartos.put(quarto.getNumero(), quarto);
                 linha = buffer.readLine();
             }
 
             return listaQuartos;
 
         } catch (Exception e){
-            System.out.println("Erro na leitura de arquivos!");
+            System.out.println("Erro na leitura de dados (Quarto).");
             System.out.println(e.getMessage());
         }
 

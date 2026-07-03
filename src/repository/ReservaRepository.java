@@ -5,15 +5,25 @@ import model.Quarto;
 import model.Reserva;
 import persistencia.ReservaPersistencia;
 import java.util.ArrayList;
+import java.util.HashMap;
 import static enums.StatusReserva.*;
 
 
 public class ReservaRepository {
-    private ArrayList<Reserva> listaReservas;
+    private static ReservaRepository instance;
 
+    private HashMap<Integer, Reserva> listaReservas;
 
-    public ReservaRepository(ClienteRepository clienteRepository, QuartoRepository quartoRepository){
+    private ReservaRepository(ClienteRepository clienteRepository, QuartoRepository quartoRepository){
         listaReservas = ReservaPersistencia.carregarReservas(clienteRepository, quartoRepository);
+    }
+
+    public static ReservaRepository getInstance(ClienteRepository clienteRepository, QuartoRepository quartoRepository){
+        if(instance == null){
+            instance = new ReservaRepository(clienteRepository, quartoRepository);
+        }
+
+        return instance;
     }
 
     public Reserva buscarReservaPorId(int id){
@@ -21,13 +31,7 @@ public class ReservaRepository {
             return null;
         }
 
-        for(Reserva reserva : listaReservas){
-            if(reserva.getId() == id){
-                return reserva;
-            }
-        }
-
-        return null;
+        return listaReservas.get(id);
     }
 
     public void adicionarReserva(Reserva reserva){
@@ -35,51 +39,46 @@ public class ReservaRepository {
             throw new IllegalArgumentException("ERRO! Reserva inválida.");
         }
 
-        if(buscarReservaPorId(reserva.getId()) != null){
+        if(listaReservas.containsKey(reserva.getId())){
             throw new IllegalArgumentException("ERRO! Já existe uma reserva com esse ID.");
         }
 
-        listaReservas.add(reserva);
-        ReservaPersistencia.salvarReservas(listaReservas);
+        listaReservas.put(reserva.getId(), reserva);
     }
 
     public void removerReserva(int id){
-        Reserva reserva = buscarReservaPorId(id);
 
-        if(reserva == null){
+        if(listaReservas.remove(id) == null){
             throw new IllegalArgumentException("ERRO! Reserva inválida.");
         }
-
-        listaReservas.remove(reserva);
-        ReservaPersistencia.salvarReservas(listaReservas);
     }
 
     public ArrayList<Reserva> listarReservas(){
-        return new ArrayList<>(listaReservas);
+        return new ArrayList<>(listaReservas.values());
     }
 
     public ArrayList<Reserva> listarReservasAtivas(){
-        ArrayList<Reserva> reservasAtivas = new ArrayList<>();
+        ArrayList<Reserva> ativas = new ArrayList<>();
 
-        for(Reserva reserva : listaReservas){
+        for(Reserva reserva : listaReservas.values()){
             if(reserva.getStatus() == AGENDADA || reserva.getStatus() == ANDAMENTO){
-                reservasAtivas.add(reserva);
+                ativas.add(reserva);
             }
         }
 
-        return reservasAtivas;
+        return ativas;
     }
 
     public ArrayList<Reserva> listarReservasInativas(){
-        ArrayList<Reserva> reservasInativas = new ArrayList<>();
+        ArrayList<Reserva> inativas = new ArrayList<>();
 
-        for(Reserva reserva : listaReservas){
+        for(Reserva reserva : listaReservas.values()){
             if(reserva.getStatus() == CONCLUIDA || reserva.getStatus() == CANCELADA){
-                reservasInativas.add(reserva);
+                inativas.add(reserva);
             }
         }
 
-        return reservasInativas;
+        return inativas;
     }
 
     public ArrayList<Reserva> buscarReservasPorCliente(Cliente cliente){
@@ -87,10 +86,11 @@ public class ReservaRepository {
             return new ArrayList<>();
         }
 
+        int idCliente = cliente.getId();
         ArrayList<Reserva> reservasDoCliente = new ArrayList<>();
 
-        for(Reserva reserva : listaReservas){
-            if(reserva.getCliente().getId() == cliente.getId()){
+        for(Reserva reserva : listaReservas.values()){
+            if(reserva.getCliente().getId() == idCliente){
                 reservasDoCliente.add(reserva);
             }
         }
@@ -103,10 +103,11 @@ public class ReservaRepository {
             return new ArrayList<>();
         }
 
+        int numeroQuarto = quarto.getNumero();
         ArrayList<Reserva> reservasDoQuarto = new ArrayList<>();
 
-        for(Reserva reserva : listaReservas){
-            if(reserva.getQuarto().getNumero() == quarto.getNumero()){
+        for(Reserva reserva : listaReservas.values()){
+            if(reserva.getQuarto().getNumero() == numeroQuarto){
                 reservasDoQuarto.add(reserva);
             }
         }
@@ -114,4 +115,7 @@ public class ReservaRepository {
         return reservasDoQuarto;
     }
 
+    public void salvar(){
+        ReservaPersistencia.salvarReservas(listaReservas);
+    }
 }

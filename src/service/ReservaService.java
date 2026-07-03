@@ -1,6 +1,7 @@
 package service;
 import enums.StatusQuarto;
 import model.*;
+import persistencia.QuartoPersistencia;
 import repository.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -36,8 +37,10 @@ public class ReservaService {
         Reserva reserva = new Reserva(idReserva, cliente, quarto, checkin, checkout);
 
         reservaRepository.adicionarReserva(reserva);
-
         quarto.setStatus(StatusQuarto.RESERVADO);
+
+        reservaRepository.salvar();
+        quartoRepository.salvar();
 
         return reserva;
     }
@@ -45,16 +48,25 @@ public class ReservaService {
     public void cancelarReserva(int idReserva){
         Reserva reserva = buscarReservaPorId(idReserva);
         reserva.cancelarReserva();
+
+        reservaRepository.salvar();
+        quartoRepository.salvar();
     }
 
     public void realizarCheckIn(int idReserva){
         Reserva reserva = buscarReservaPorId(idReserva);
         reserva.realizarCheckIn();
+
+        reservaRepository.salvar();
+        quartoRepository.salvar();
     }
 
     public void realizarCheckOut(int idReserva){
         Reserva reserva = buscarReservaPorId(idReserva);
         reserva.realizarCheckout();
+
+        reservaRepository.salvar();
+        quartoRepository.salvar();
     }
 
     public Reserva buscarReservaPorId(int idReserva){
