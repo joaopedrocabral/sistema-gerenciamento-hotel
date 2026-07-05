@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class ClienteRepository {
     private static ClienteRepository instance;
+    private static final int PRIMEIRO_ID = 1000;
 
     private HashMap<Integer, Cliente> listaClientes;
 
@@ -19,6 +20,18 @@ public class ClienteRepository {
         }
 
         return instance;
+    }
+
+    public int gerarProximoId(){
+        int maiorId = PRIMEIRO_ID - 1;
+
+        for(Integer idAtual : listaClientes.keySet()){
+            if(idAtual > maiorId){
+                maiorId = idAtual;
+            }
+        }
+
+        return maiorId + 1;
     }
 
     public void adicionarCliente(Cliente cliente){

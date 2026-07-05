@@ -17,7 +17,7 @@ public class ReservaService {
         this.quartoRepository = quartoRepository;
     }
 
-    public Reserva criarReserva(int idReserva, int idCliente, int numeroQuarto, LocalDate checkin, LocalDate checkout){
+    public Reserva criarReserva(int idCliente, int numeroQuarto, LocalDate checkin, LocalDate checkout){
         Cliente cliente = clienteRepository.buscarClientePorId(idCliente);
 
         if(cliente == null){
@@ -34,7 +34,7 @@ public class ReservaService {
             throw new IllegalArgumentException("ERRO! Esse quarto não está disponível.");
         }
 
-        Reserva reserva = new Reserva(idReserva, cliente, quarto, checkin, checkout);
+        Reserva reserva = new Reserva(reservaRepository.gerarProximoId(), cliente, quarto, checkin, checkout);
 
         reservaRepository.adicionarReserva(reserva);
         quarto.setStatus(StatusQuarto.RESERVADO);

@@ -6,6 +6,7 @@ import model.Usuario;
 
 public class UsuarioRepository {
     private static UsuarioRepository instance;
+    private static final int PRIMEIRO_ID = 1;
 
     private HashMap<Integer, Usuario> listaUsuarios;
 
@@ -21,6 +22,17 @@ public class UsuarioRepository {
         return instance;
     }
 
+    public int getProximoId(){
+        int maiorId = PRIMEIRO_ID - 1;
+
+        for(Integer idAtual : listaUsuarios.keySet()){
+            if(idAtual > maiorId){
+                maiorId = idAtual;
+            }
+        }
+
+        return maiorId + 1;
+    }
 
     public Usuario buscarUsuarioPorId(int id){
         if(id <= 0){

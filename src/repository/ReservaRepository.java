@@ -11,6 +11,7 @@ import static enums.StatusReserva.*;
 
 public class ReservaRepository {
     private static ReservaRepository instance;
+    private static final int PRIMEIRO_ID = 1000000;
 
     private HashMap<Integer, Reserva> listaReservas;
 
@@ -24,6 +25,18 @@ public class ReservaRepository {
         }
 
         return instance;
+    }
+
+    public int gerarProximoId(){
+        int maiorId = PRIMEIRO_ID - 1;
+
+        for(Integer idAtual : listaReservas.keySet()){
+            if(idAtual > maiorId){
+                maiorId = idAtual;
+            }
+        }
+
+        return maiorId + 1;
     }
 
     public Reserva buscarReservaPorId(int id){

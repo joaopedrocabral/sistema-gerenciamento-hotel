@@ -210,23 +210,20 @@ public class Main {
 
                         mostrarTitulos("CADASTRO DE CLIENTES");
 
-                        System.out.println("ID do Cliente: ");
-                        int idCliente = lerInteiro(scanner);
-
                         System.out.println("Nome: ");
                         String nomeCliente = lerString(scanner);
 
                         System.out.println("CPF (somente números): ");
                         String cpfCliente = formatarCPF(lerString(scanner));
 
-
                         System.out.println("Telefone: (somente números)");
                         String telefoneCliente = formatarTelefone(lerString(scanner));
 
-                        Cliente cliente = new Cliente(nomeCliente, cpfCliente, telefoneCliente, idCliente);
-                        clienteService.cadastrarCliente(cliente);
+                        Cliente cliente = clienteService.cadastrarCliente(nomeCliente, cpfCliente, telefoneCliente);
 
                         System.out.println("Cliente cadastrado!");
+                        System.out.println("ID do Cliente: " + cliente.getId());
+
                         aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e) {
@@ -452,9 +449,6 @@ public class Main {
                     try {
                         mostrarTitulos("CRIAR RESERVA");
 
-                        System.out.println("ID da Reserva: ");
-                        int idReserva = lerInteiro(scanner);
-
                         System.out.println("ID do Cliente: ");
                         int idCliente = lerInteiro(scanner);
 
@@ -467,7 +461,7 @@ public class Main {
                         System.out.println("data de Check-out (DD/MM/AAAA): ");
                         LocalDate dataCheckout = lerData(scanner);
 
-                        Reserva reserva = reservaService.criarReserva(idReserva, idCliente, numeroQuarto, dataCheckin, dataCheckout);
+                        Reserva reserva = reservaService.criarReserva(idCliente, numeroQuarto, dataCheckin, dataCheckout);
 
                         System.out.println(reserva);
 
@@ -688,9 +682,6 @@ public class Main {
                     try {
                         mostrarTitulos("CADASTRO DE USUÁRIO");
 
-                        System.out.println("ID Usuário: ");
-                        int idUsuario = lerInteiro(scanner);
-
                         System.out.println("Nome: ");
                         String nomeUsuario = lerString(scanner);
 
@@ -720,11 +711,11 @@ public class Main {
                                 throw new IllegalArgumentException("ERRO! Cargo inválido.");
                         }
 
-                        Usuario usuario = new Usuario(nomeUsuario, cpfUsuario, telefoneUsuario, idUsuario, senhaUsuario, cargo);
-
-                        usuarioService.cadastrarUsuario(usuario);
+                        Usuario usuario = usuarioService.cadastrarUsuario(nomeUsuario, cpfUsuario, telefoneUsuario, senhaUsuario, cargo);
 
                         System.out.println("Usuário cadastrado!");
+                        System.out.println("ID Usuário: " + usuario.getId());
+
                         aguardarEnter(scanner);
 
                     } catch (IllegalArgumentException e){

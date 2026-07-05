@@ -1,4 +1,5 @@
 package service;
+import enums.Cargo;
 import model.Usuario;
 import repository.UsuarioRepository;
 
@@ -21,8 +22,12 @@ public class UsuarioService {
         return usuario;
     }
 
-    public void cadastrarUsuario(Usuario usuario){
+    public Usuario cadastrarUsuario(String nome, String cpf, String telefone, String senha, Cargo cargo){
+        Usuario usuario = new Usuario(nome, cpf, telefone, usuarioRepository.getProximoId(), senha, cargo);
+
         usuarioRepository.adicionarUsuario(usuario);
+
+        return usuario;
     }
 
     public void removerUsuario(int idUsuario){

@@ -20,10 +20,13 @@ public class ClienteService {
         return cliente;
     }
 
-    public void cadastrarCliente(Cliente cliente){
-        clienteRepository.adicionarCliente(cliente);
+    public Cliente cadastrarCliente(String nome, String cpf, String telefone){
+        Cliente cliente = new Cliente(nome, cpf, telefone, clienteRepository.gerarProximoId());
 
+        clienteRepository.adicionarCliente(cliente);
         clienteRepository.salvar();
+
+        return cliente;
     }
 
     public void removerCliente(int idCliente){
